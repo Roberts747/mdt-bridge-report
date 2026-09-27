@@ -1,0 +1,923 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MDT-BRIDGE 深度解读</title>
+<meta name="description" content="MDT-BRIDGE 深度解读：新辅助度伐利尤单抗联合化疗 2 周期后，由多学科团队（MDT）重新判断能否手术。WCLC 2026 主分析数据、患者流向、分母口径与证据链解读。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" media="print" onload="this.media='all'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"></noscript>
+<style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+<style>
+:root{
+  color-scheme: light;
+  --paper:#f4f5f9; --surface:#ffffff; --surface-2:#f8f8fc;
+  --ink:#1c1e3a; --ink-2:#4b4e6b; --muted:#62658a;
+  --line:#e1e3ec; --line-2:#c9ccdb;
+  --hema:#3f4db8; --hema-text:#3f4db8; --hema-soft:#e9ebf8; --hema-deep:#3f4db8;
+  --eosin:#cf4f78; --eosin-text:#a8385d; --eosin-soft:#fae8ee; --eosin-deep:#a8385d;
+  --none:#a4a7ba; --on-deep:#ffffff;
+  --tip-bg:#1c1e3a; --tip-ink:#ffffff; --tip-ink-2:#c9ccdb;
+  --font-sans:"IBM Plex Sans","PingFang SC","Hiragino Sans GB","Noto Sans SC","Microsoft YaHei",system-ui,sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,"PingFang SC","Microsoft YaHei",monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --paper:#12132a; --surface:#191b33; --surface-2:#1e2140;
+    --ink:#e9eaf7; --ink-2:#b6b9d6; --muted:#8b8eb0;
+    --line:#2a2d4d; --line-2:#3a3e63;
+    --hema:#7583ea; --hema-text:#9aa4f2; --hema-soft:#232752; --hema-deep:#4552bd;
+    --eosin:#da6a8e; --eosin-text:#ee8fae; --eosin-soft:#3a2139; --eosin-deep:#a8446a;
+    --none:#5d6080; --on-deep:#ffffff;
+    --tip-bg:#e9eaf7; --tip-ink:#12132a; --tip-ink-2:#4b4e6b;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --paper:#12132a; --surface:#191b33; --surface-2:#1e2140;
+  --ink:#e9eaf7; --ink-2:#b6b9d6; --muted:#8b8eb0;
+  --line:#2a2d4d; --line-2:#3a3e63;
+  --hema:#7583ea; --hema-text:#9aa4f2; --hema-soft:#232752; --hema-deep:#4552bd;
+  --eosin:#da6a8e; --eosin-text:#ee8fae; --eosin-soft:#3a2139; --eosin-deep:#a8446a;
+  --none:#5d6080; --on-deep:#ffffff;
+  --tip-bg:#e9eaf7; --tip-ink:#12132a; --tip-ink-2:#4b4e6b;
+}
+*{box-sizing:border-box}
+body{background:var(--paper);color:var(--ink);font-family:var(--font-sans);font-size:16px;line-height:1.75;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+a{color:var(--hema-text);text-decoration-thickness:1px;text-underline-offset:3px}
+a:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--ink);outline-offset:2px;border-radius:3px}
+.page{max-width:1040px;margin-inline:auto;padding-inline:20px;padding-block:0 72px}
+.prose{max-width:720px}
+.prose p:not(.eyebrow){margin:0 0 14px;color:var(--ink-2)}
+.prose p strong,.prose li strong{color:var(--ink);font-weight:600}
+.num{font-variant-numeric:tabular-nums}
+
+/* grade tags + refs */
+.g{display:inline-flex;align-items:center;font:600 10.5px/1 var(--font-mono);padding:3px 5px;border-radius:3px;margin-left:5px;vertical-align:2px;white-space:nowrap;letter-spacing:.02em}
+.g-a{background:var(--hema-soft);color:var(--hema-text)}
+.g-b{background:var(--surface-2);color:var(--ink-2);box-shadow:inset 0 0 0 1px var(--line-2)}
+.g-c{background:var(--eosin-soft);color:var(--eosin-text)}
+.g-x{background:transparent;color:var(--muted);box-shadow:inset 0 0 0 1px var(--line-2)}
+.ref{font:500 11.5px/1 var(--font-mono);text-decoration:none;margin-left:3px;vertical-align:1px;color:var(--hema-text)}
+.ref:hover{text-decoration:underline}
+
+/* hero */
+.hero{padding-block:44px 8px}
+.slide-label{display:inline-flex;align-items:stretch;max-width:100%;background:var(--surface);border:1px solid var(--line-2);border-radius:4px;overflow:hidden;font:500 12px/1.5 var(--font-mono);color:var(--ink-2)}
+.slide-label .frost{flex:none;width:18px;border-right:1px solid var(--line-2);background:repeating-linear-gradient(135deg,var(--line) 0 2px,transparent 2px 5px)}
+.slide-label .txt{display:flex;flex-wrap:wrap;gap:2px 14px;padding:6px 12px}
+h1{font-size:clamp(30px,5.4vw,48px);line-height:1.18;font-weight:700;letter-spacing:-.015em;margin:24px 0 12px;text-wrap:balance}
+.deck{font-size:clamp(16px,2.1vw,19px);line-height:1.6;font-weight:500;color:var(--ink-2);margin:0 0 16px;max-width:780px}
+.lede{max-width:720px;color:var(--ink-2);margin:0 0 26px}
+.lede strong{color:var(--ink);font-weight:600}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 16px 14px;display:flex;flex-direction:column;gap:3px}
+.stat .v{font-size:clamp(30px,4.2vw,40px);font-weight:600;line-height:1.1;letter-spacing:-.01em}
+.stat .v small{font-size:.5em;font-weight:500;margin-left:1px}
+.stat .k{font-size:14px;font-weight:600;margin-top:4px}
+.stat .d{font:400 12px/1.5 var(--font-mono);color:var(--muted)}
+.grades{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:12.5px;color:var(--muted);margin:14px 0 0}
+.grades .g{margin-left:0;margin-right:5px}
+
+.takeaways{margin-top:30px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));background:var(--surface);border:1px solid var(--line);border-radius:12px}
+.tk{padding:18px 20px 20px}
+.tk+.tk{border-left:1px solid var(--line)}
+.tk h2{font-size:15px;font-weight:700;margin:0 0 6px;letter-spacing:0}
+.tk p{margin:0;font-size:14.5px;line-height:1.75;color:var(--ink-2)}
+.tk .tk-k{display:block;font:500 11.5px/1.4 var(--font-mono);color:var(--muted);letter-spacing:.04em;margin-bottom:6px}
+
+.toc{display:flex;flex-wrap:wrap;gap:8px;margin:26px 0 0;padding:0;list-style:none}
+.toc a{display:inline-block;font-size:13.5px;line-height:1.4;padding:6px 12px;border:1px solid var(--line-2);border-radius:999px;color:var(--ink-2);text-decoration:none;background:var(--surface)}
+.toc a:hover{border-color:var(--hema);color:var(--hema-text)}
+
+/* sections */
+section{padding-block:60px 0}
+.eyebrow{display:flex;align-items:center;gap:8px;font:500 12px/1.5 var(--font-mono);color:var(--muted);letter-spacing:.02em;margin:0 0 8px}
+.eyebrow::before{content:"";flex:none;width:8px;height:8px;border-radius:1px;background:var(--hema)}
+h2{font-size:clamp(22px,3.1vw,28px);line-height:1.3;font-weight:700;letter-spacing:-.01em;margin:0 0 14px;text-wrap:balance}
+h3{font-size:18px;line-height:1.45;font-weight:700;margin:30px 0 10px;text-wrap:balance}
+
+/* figures */
+figure.fig{margin:22px 0 0;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:20px 22px 18px}
+.fig-title{font-size:16px;font-weight:700;line-height:1.5;margin:0 0 2px}
+.fig-sub{font-size:13px;color:var(--muted);margin:0 0 18px}
+.fig-note{font-size:12.5px;line-height:1.75;color:var(--muted);margin:16px 0 0;padding-top:12px;border-top:1px solid var(--line)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:12.5px;color:var(--ink-2);margin:0 0 16px}
+.key{display:inline-flex;align-items:center;gap:6px}
+.sw{display:inline-block;flex:none;width:12px;height:12px;border-radius:2px;background:var(--hema)}
+.sw.eosin{background:var(--eosin)} .sw.none{background:var(--none)}
+.sw.ring{background:var(--surface);border:2px solid var(--ink-2);border-radius:50%}
+.sw.dot{border-radius:50%}
+.sw.hollow{background:var(--surface);border:2px solid var(--hema)}
+
+/* design flow */
+.dflow{display:flex;flex-direction:column;max-width:780px;margin-inline:auto}
+.dn{background:var(--surface-2);border:1px solid var(--line-2);border-radius:10px;padding:12px 16px;display:grid;gap:2px}
+.dn .tag,.dbr .tag{font:500 11.5px/1.5 var(--font-mono);color:var(--muted);letter-spacing:.04em}
+.dn strong{font-size:15.5px;line-height:1.5}
+.dn .sub{font-size:13px;line-height:1.6;color:var(--ink-2)}
+.dn.mdt{background:var(--hema-deep);border-color:transparent}
+.dn.mdt .tag,.dn.mdt strong,.dn.mdt .sub{color:var(--on-deep)}
+.dn.mdt .tag{opacity:.82}
+.dl{width:2px;height:18px;background:var(--line-2);margin-inline:auto}
+.dsplit{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:14px;padding-top:18px}
+.dsplit::before{content:"";position:absolute;top:0;left:25%;right:25%;height:18px;border:2px solid var(--line-2);border-bottom:none;border-radius:8px 8px 0 0}
+.dbr{background:var(--surface);border:1px solid var(--line-2);border-radius:10px;padding:12px 16px}
+.dbr.s .tag{color:var(--hema-text)} .dbr.c .tag{color:var(--eosin-text)}
+.dbr ol{list-style:none;margin:4px 0 0;padding:0;display:grid;gap:4px}
+.dbr li{position:relative;padding-left:16px;font-size:14px;line-height:1.6}
+.dbr li::before{content:"";position:absolute;left:0;top:.62em;width:7px;height:7px;border-radius:50%;background:var(--hema)}
+.dbr.c li::before{background:var(--eosin)}
+.endpoints{margin-top:16px;display:flex;flex-wrap:wrap;gap:6px 22px;font-size:13.5px;color:var(--ink-2)}
+.endpoints b{color:var(--ink);font-weight:600}
+
+.elig{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}
+.elig-col{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 20px}
+.elig-col h4{margin:0 0 8px;font-size:15px}
+.elig-col ul{margin:0;padding-left:18px}
+.elig-col li{font-size:14px;line-height:1.7;color:var(--ink-2);margin-bottom:3px}
+.elig-col li::marker{color:var(--muted)}
+
+/* patient flow */
+.fc{display:flex;flex-direction:column;gap:20px}
+.fc-row{display:grid;grid-template-columns:150px minmax(0,1fr);gap:6px 16px;align-items:center}
+.fc-label{font-size:13.5px;font-weight:600;line-height:1.4}
+.fc-label span{display:block;font:400 11.5px/1.5 var(--font-mono);color:var(--muted)}
+.fc-bar{display:flex;gap:2px;height:24px}
+.seg{display:block;min-width:4px;background:var(--hema);cursor:default}
+.seg:last-child{border-radius:0 4px 4px 0}
+.seg.eosin{background:var(--eosin)} .seg.none{background:var(--none)}
+.seg:hover{filter:brightness(1.1) saturate(1.05)}
+.fc-sum{grid-column:2;display:flex;flex-wrap:wrap;gap:3px 16px;font-size:13px;color:var(--ink-2)}
+.fc-sum b{color:var(--ink);font-weight:600;font-variant-numeric:tabular-nums}
+.fc-sum em{font-style:normal;color:var(--muted);font-variant-numeric:tabular-nums}
+.fc-note{flex-basis:100%;font-size:12px;color:var(--muted)}
+
+/* dumbbell */
+.dbl{display:flex;flex-direction:column;gap:16px}
+.dbl-row,.dbl-axis{display:grid;grid-template-columns:170px minmax(0,1fr) 128px;gap:4px 18px;align-items:center}
+.dbl-label{font-size:13.5px;font-weight:600;line-height:1.4}
+.dbl-label span{display:block;font-size:12px;font-weight:400;color:var(--muted)}
+.dbl-track{position:relative;height:24px}
+.dbl-track::before{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:var(--line)}
+.dbl-conn{position:absolute;top:calc(50% - 1px);height:2px;background:var(--line-2)}
+.dbl-dot{position:absolute;top:50%;width:13px;height:13px;border-radius:50%;transform:translate(-50%,-50%);box-shadow:0 0 0 2px var(--surface)}
+.dbl-dot::after{content:"";position:absolute;inset:-8px;border-radius:50%}
+.dbl-dot.i{background:transparent;border:2px solid var(--ink-2);box-shadow:none;z-index:2}
+.dbl-dot.f{background:var(--hema)}
+.dbl-val{font-size:13.5px;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;line-height:1.4}
+.dbl-val b{font-weight:600}
+.dbl-val span{display:block;font-size:12px;color:var(--muted)}
+.dbl-axis .ticks{position:relative;height:20px;border-top:1px solid var(--line-2)}
+.dbl-axis .ticks span{position:absolute;top:4px;transform:translateX(-50%);font:400 11px/1 var(--font-mono);color:var(--muted)}
+.dbl-axis .ticks span:first-child{transform:none}
+.dbl-axis .ticks span:last-child{transform:translateX(-100%)}
+
+/* forest */
+.fp{display:flex;flex-direction:column}
+.fp-group{font:600 12.5px/1.5 var(--font-mono);color:var(--ink-2);margin:14px 0 4px;letter-spacing:.02em}
+.fp-group:first-child{margin-top:0}
+.fp-row,.fp-axis{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,2fr) 150px;gap:4px 18px;align-items:center}
+.fp-row{padding-block:8px;border-top:1px solid var(--line)}
+.fp-name b{display:block;font-size:14px;font-weight:600;line-height:1.5}
+.fp-name>span{display:block;font-size:12px;line-height:1.5;color:var(--muted)}
+.fp-plot{position:relative;height:22px}
+.fp-ref{position:absolute;top:-9px;bottom:-9px;width:1px;background:var(--ink-2);opacity:.5}
+.fp-ci{position:absolute;top:50%;height:2px;transform:translateY(-50%);background:var(--hema);border-radius:1px}
+.fp-pt{position:absolute;top:50%;width:12px;height:12px;border-radius:2px;transform:translate(-50%,-50%);background:var(--hema);box-shadow:0 0 0 2px var(--surface)}
+.fp-pt::after{content:"";position:absolute;inset:-8px}
+.fp-pt.ns{background:var(--surface);border:2px solid var(--hema)}
+.fp-val{font-size:13.5px;text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums;line-height:1.4}
+.fp-val small{font-size:12px;color:var(--ink-2)}
+.fp-val span{display:block;font-size:11.5px;color:var(--muted)}
+.fp-empty .fp-val{color:var(--muted)}
+.fp-axis{padding-top:2px}
+.fp-axis-cap{font-size:12px;color:var(--muted)}
+.fp-ticks{position:relative;height:40px;border-top:1px solid var(--line-2)}
+.fp-ticks span{position:absolute;top:4px;transform:translateX(-50%);font:400 11px/1 var(--font-mono);color:var(--muted)}
+.fp-ticks span:first-child{transform:none}
+.fp-dir{position:absolute;top:22px;font-style:normal;font-size:11.5px;color:var(--ink-2);white-space:nowrap}
+
+/* consensus spectrum */
+.spec{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:2px}
+.sp{display:flex;flex-direction:column;gap:4px;padding:12px 12px 14px;min-height:92px}
+.sp:first-child{border-radius:8px 0 0 8px} .sp:last-child{border-radius:0 8px 8px 0}
+.sp b{font-size:15px;line-height:1.4}
+.sp .vd{font-size:13px;font-weight:600}
+.sp .chip{align-self:flex-start;font:500 11px/1 var(--font-mono);padding:3px 6px;border-radius:3px;margin-top:auto}
+.lv1{background:var(--hema-soft)} .lv1 .vd{color:var(--hema-text)}
+.lv2{background:var(--eosin-soft)} .lv2 .vd{color:var(--eosin-text)} .lv2 .chip{background:var(--surface);color:var(--eosin-text);box-shadow:inset 0 0 0 1px var(--eosin)}
+.lv3{background:var(--eosin-deep)} .lv3 b,.lv3 .vd{color:var(--on-deep)}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:10px 22px;margin:18px 0 0;padding:0;list-style:none}
+.facts li{font-size:13.5px;line-height:1.7;color:var(--ink-2);padding-left:14px;position:relative}
+.facts li::before{content:"";position:absolute;left:0;top:.7em;width:6px;height:6px;border-radius:1px;background:var(--line-2)}
+.defn{margin-top:20px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 20px}
+.defn p{margin:0;font-size:14.5px;color:var(--ink-2)}
+.defn .tag{display:block;font:500 11.5px/1.5 var(--font-mono);color:var(--muted);letter-spacing:.04em;margin-bottom:4px}
+
+/* tables */
+.tbl-wrap{overflow-x:auto;margin-top:20px;border:1px solid var(--line);border-radius:12px;background:var(--surface);-webkit-overflow-scrolling:touch}
+table.t{border-collapse:collapse;width:100%;font-size:13.5px;line-height:1.65}
+table.t.wide{min-width:980px;table-layout:fixed}
+.t.wide .n{white-space:normal}
+table.t.mid{min-width:640px}
+.t caption{text-align:left;padding:14px 14px 4px;font-size:15px;font-weight:700;color:var(--ink)}
+.t th{text-align:left;font-weight:600;font-size:12.5px;color:var(--ink-2);background:var(--surface-2);padding:10px 12px;border-bottom:1px solid var(--line-2);white-space:nowrap}
+.t td{padding:10px 12px;border-top:1px solid var(--line);vertical-align:top;color:var(--ink-2)}
+.t td b{color:var(--ink);font-weight:600}
+.t th:first-child,.t td:first-child{position:sticky;left:0;z-index:1}
+.t td:first-child{background:var(--surface)}
+.t th:first-child{background:var(--surface-2)}
+.t tr.hl td,.t tr.hl td:first-child{background:var(--hema-soft)}
+.t .n{font-variant-numeric:tabular-nums;white-space:nowrap}
+.scroll-hint{display:none;font-size:12px;color:var(--muted);margin:8px 2px 0}
+
+/* read-the-data points */
+.points{list-style:none;margin:10px 0 0;padding:0;counter-reset:p;max-width:760px}
+.points>li{counter-increment:p;position:relative;padding-left:46px;margin-top:28px}
+.points>li::before{content:counter(p);position:absolute;left:0;top:1px;width:30px;height:30px;border-radius:50%;border:1.5px solid var(--hema);color:var(--hema-text);font:600 14px/27px var(--font-mono);text-align:center}
+.points h3{margin:0 0 8px;font-size:17.5px}
+.points ul{margin:0;padding-left:18px}
+.points li li{font-size:15px;line-height:1.75;color:var(--ink-2);margin-bottom:6px}
+.points li li strong{color:var(--ink);font-weight:600}
+.calc{display:inline-block;font:500 12.5px/1.5 var(--font-mono);color:var(--ink-2);background:var(--surface-2);box-shadow:inset 0 0 0 1px var(--line);border-radius:4px;padding:1px 6px}
+
+.unverified{margin-top:34px;max-width:760px;background:var(--surface);border:1px solid var(--line-2);border-radius:12px;padding:18px 22px}
+.unverified h3{margin:0 0 6px;font-size:16px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.unverified p{margin:0 0 10px;font-size:14px;color:var(--ink-2)}
+.unverified ul{margin:0;padding-left:18px}
+.unverified li{font-size:14px;line-height:1.75;color:var(--ink-2);margin-bottom:4px}
+
+/* bridge */
+.bridge{display:grid;grid-template-columns:minmax(0,1fr) 28px minmax(0,1fr) 28px minmax(0,1fr);align-items:center;margin-top:20px}
+.br{background:var(--surface);border:1px solid var(--line-2);border-radius:12px;padding:14px 16px;height:100%;display:flex;flex-direction:column;gap:3px}
+.br .tag{font:500 11.5px/1.5 var(--font-mono);color:var(--muted);letter-spacing:.04em}
+.br b{font-size:17px;line-height:1.4}
+.br span{font-size:13.5px;line-height:1.65;color:var(--ink-2)}
+.br .res{margin-top:6px;padding-top:8px;border-top:1px solid var(--line);font-size:13px;color:var(--ink)}
+.br.mid{background:var(--hema-deep);border-color:transparent}
+.br.mid .tag,.br.mid b,.br.mid span,.br.mid .res{color:var(--on-deep)}
+.br.mid .tag{opacity:.82}
+.br.mid .res{border-top-color:rgba(255,255,255,.28)}
+.br-link{height:2px;background:var(--line-2)}
+
+/* TNM */
+.tnm-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:18px}
+.tnm-box{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.tnm-cap{font-size:14px;font-weight:700;margin-bottom:8px}
+.tnm-scroll{overflow-x:auto}
+.tnm{border-collapse:separate;border-spacing:3px;font:500 12.5px/1 var(--font-mono);width:100%}
+.tnm th{font-weight:600;color:var(--muted);padding:6px 4px;text-align:center}
+.tnm tbody th{text-align:left;white-space:nowrap}
+.tnm td{text-align:center;padding:9px 4px;border-radius:4px;background:var(--surface-2);color:var(--ink-2);white-space:nowrap}
+.tnm td.a{background:var(--hema-deep);color:var(--on-deep);font-weight:600}
+.tnm td.b{background:var(--eosin-soft);color:var(--eosin-text);font-weight:600;box-shadow:inset 0 0 0 1px var(--eosin)}
+.tnm-legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:12.5px;color:var(--ink-2);margin-top:12px}
+.tnm-legend .sw.a{background:var(--hema-deep)}
+.tnm-legend .sw.b{background:var(--eosin-soft);box-shadow:inset 0 0 0 1px var(--eosin)}
+
+/* FAQ + steps */
+.faq{max-width:760px}
+.faq h3{margin-top:40px}
+.faq h3.first{margin-top:18px}
+.faq p:not(.eyebrow),.faq li{color:var(--ink-2);font-size:15px}
+.faq ul{padding-left:18px;margin:0 0 12px}
+.faq li{margin-bottom:6px}
+.faq li strong,.faq p strong{color:var(--ink);font-weight:600}
+.approvals{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:14px 0 10px}
+.ap{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.ap b{display:block;font-size:14px}
+.ap .yr{font:400 11.5px/1.5 var(--font-mono);color:var(--muted)}
+.ap p{margin:6px 0 0;font-size:13.5px;line-height:1.65}
+
+.verdict{margin-top:22px;max-width:760px;background:var(--surface);border:1px solid var(--line-2);border-radius:12px;padding:22px 24px}
+.verdict .tag{font:500 11.5px/1.5 var(--font-mono);color:var(--muted);letter-spacing:.04em}
+.verdict h3{margin:4px 0 12px;font-size:21px}
+.verdict ul{margin:0;padding-left:18px}
+.verdict li{font-size:15px;line-height:1.75;color:var(--ink-2);margin-bottom:8px}
+.verdict li strong{color:var(--ink);font-weight:600}
+.steps{list-style:none;margin:24px 0 0;padding:0;max-width:760px;counter-reset:s}
+.steps>li{counter-increment:s;position:relative;padding:0 0 22px 46px}
+.steps>li::before{content:counter(s);position:absolute;left:0;top:0;width:30px;height:30px;border-radius:50%;background:var(--hema-deep);color:var(--on-deep);font:600 14px/30px var(--font-mono);text-align:center}
+.steps>li::after{content:"";position:absolute;left:14px;top:34px;bottom:4px;width:2px;background:var(--line-2)}
+.steps>li:last-child::after{display:none}
+.steps b{display:block;font-size:16px;line-height:1.5;margin-bottom:2px}
+.steps p{margin:0;font-size:14.5px;line-height:1.75;color:var(--ink-2)}
+
+.refs{margin:14px 0 0;padding-left:26px;max-width:860px}
+.refs li{font-size:13.5px;line-height:1.7;color:var(--ink-2);margin-bottom:8px;scroll-margin-top:24px}
+.refs li::marker{font-family:var(--font-mono);color:var(--muted)}
+.refs a{word-break:break-word}
+.refs li:target{background:var(--hema-soft);border-radius:4px}
+footer{margin-top:48px;padding-top:18px;border-top:1px solid var(--line);font-size:12.5px;line-height:1.8;color:var(--muted);max-width:860px}
+
+/* tooltip */
+.tip{position:fixed;z-index:50;pointer-events:none;background:var(--tip-bg);color:var(--tip-ink);padding:8px 10px;border-radius:6px;font-size:12.5px;line-height:1.45;max-width:260px;box-shadow:0 6px 18px rgba(0,0,0,.2)}
+.tip strong{display:block;font-size:14px;font-weight:600;font-variant-numeric:tabular-nums}
+.tip span{color:var(--tip-ink-2)}
+
+/* responsive */
+@media (max-width:860px){
+  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .takeaways{grid-template-columns:1fr}
+  .tk+.tk{border-left:none;border-top:1px solid var(--line)}
+  .approvals{grid-template-columns:1fr}
+  .scroll-hint{display:block}
+}
+@media (max-width:720px){
+  .bridge{grid-template-columns:1fr}
+  .br-link{width:2px;height:18px;justify-self:center}
+  .tnm-grid,.elig,.facts{grid-template-columns:1fr}
+  .spec{grid-template-columns:1fr}
+  .sp{flex-direction:row;flex-wrap:wrap;align-items:center;gap:4px 12px;min-height:0;padding:11px 14px}
+  .sp:first-child{border-radius:8px 8px 0 0} .sp:last-child{border-radius:0 0 8px 8px}
+  .sp .chip{margin:0 0 0 auto}
+}
+@media (max-width:640px){
+  .fc-row{grid-template-columns:minmax(0,1fr)}
+  .fc-sum{grid-column:1}
+  .dbl-row,.dbl-axis{grid-template-columns:minmax(0,1fr) auto}
+  .dbl-label{grid-column:1/-1}
+  .dbl-axis>div:first-child{display:none}
+  .fp-row,.fp-axis{grid-template-columns:minmax(0,1fr) auto}
+  .fp-name{grid-column:1/-1}
+  .fp-axis-cap{grid-column:1/-1}
+  .fp-axis>div:last-child{display:none}
+}
+@media (max-width:560px){
+  .dsplit{grid-template-columns:1fr;padding-top:0;gap:0}
+  .dsplit::before{display:none}
+  .dsplit .dbr+.dbr{margin-top:12px}
+}
+@media (max-width:480px){
+  .page{padding-inline:16px}
+  body{font-size:15.5px}
+  figure.fig{padding:16px 14px 14px;border-radius:10px}
+  .hero{padding-block:30px 4px}
+  .stat{padding:14px 12px 12px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="page">
+
+<header class="hero">
+  <div class="slide-label" aria-label="研究标识"><span class="frost" aria-hidden="true"></span><span class="txt"><span>NCT05925530</span><span>II 期 · 非随机 · 全球多中心</span><span>WCLC 2026 · OA04.02</span><span>数据截止 2026-01-12</span></span></div>
+  <h1>可切除性，是一个会变的判断</h1>
+  <p class="deck">MDT-BRIDGE 深度解读：新辅助度伐利尤单抗联合化疗 2 周期后，由多学科团队（MDT）重新判断能否手术</p>
+  <p class="lede">所有患者先接受同一套诱导治疗，再在第 2 周期后由 MDT 强制再评估：能切的去手术，不能切的转同步放化疗，两条路最后都接度伐利尤单抗维持。<strong>142 例患者中，106 例完成手术切除，131 例接受了根治性局部治疗。</strong></p>
+
+  <div class="stats">
+    <div class="stat"><span class="v">74.6<small>%</small></span><span class="k">总体切除率<span class="g g-b" title="会议报道转述，已交叉核对">B</span></span><span class="d">106/142 · 主要终点</span></div>
+    <div class="stat"><span class="v">96.2<small>%</small></span><span class="k">R0 切除率<span class="g g-b" title="会议报道转述，已交叉核对">B</span></span><span class="d">约 102/106 · 手术患者</span></div>
+    <div class="stat"><span class="v">92.3<small>%</small></span><span class="k">根治性局部治疗<span class="g g-b" title="会议报道转述，已交叉核对">B</span></span><span class="d">131/142 · 手术或放化疗</span></div>
+    <div class="stat"><span class="v">90.1<small>%</small></span><span class="k">12 个月 EFS<span class="g g-b" title="会议报道转述，已交叉核对">B</span></span><span class="d">再评估可切除组 · n=121</span></div>
+  </div>
+  <p class="grades"><span><span class="g g-a" title="期刊论文或官方摘要">A</span>期刊论文或官方摘要</span><span><span class="g g-b" title="会议报道转述，已交叉核对">B</span>会议报道转述，已交叉核对</span><span><span class="g g-c" title="本文据公开数字推算">推</span>本文据公开数字推算</span><span><span class="g g-x" title="未找到出处，未采用">未核实</span>未找到出处，不采用</span></p>
+
+  <div class="takeaways">
+    <div class="tk"><span class="tk-k">证明了什么</span><h2>这条流程走得通</h2><p>把“能不能切”的判断推迟到 2 周期化免之后，并设成固定节点，是可行的。92.3% 的患者最终接受了手术或放化疗，只有 11 例（7.7%）两种局部治疗都没有接受。</p></div>
+    <div class="tk"><span class="tk-k">没有证明什么</span><h2>还不能说它更好</h2><p>这是单臂研究。74.6% 是全人群切除率，其中近三分之二基线就判定可切除；交界可切除亚组的终期切除率还没有公开。它不能说明“先化免再评估”优于直接放化疗。</p></div>
+    <div class="tk"><span class="tk-k">临床上怎么用</span><h2>改流程，不改方案</h2><p>可以把“第 2 周期后 MDT 再评估”写进本中心流程，尤其用于多站或巨块型 N2 这类交界病例。方案本身的依据仍是 AEGEAN 等 III 期随机研究。</p></div>
+  </div>
+
+  <nav aria-label="目录"><ul class="toc">
+    <li><a href="#bg">为什么需要它</a></li>
+    <li><a href="#design">研究设计</a></li>
+    <li><a href="#results">主要结果</a></li>
+    <li><a href="#read">读数据的五个要点</a></li>
+    <li><a href="#evidence">放进证据链</a></li>
+    <li><a href="#faq">常见问题</a></li>
+    <li><a href="#practice">临床落地</a></li>
+    <li><a href="#refs">参考文献</a></li>
+  </ul></nav>
+</header>
+
+<section id="bg" aria-labelledby="bg-h">
+  <div class="prose">
+    <p class="eyebrow">背景 · EORTC 多学会 Delphi 共识（Lancet Respir Med 2026）</p>
+    <h2 id="bg-h">为什么需要这项研究</h2>
+    <p>III 期 NSCLC 内部差异很大。同样写着 III 期，有人直接手术，有人直接做同步放化疗。夹在中间的是一群<strong>交界可切除</strong>的患者：技术上也许能切，但能不能切干净、切了是否真能获益，都不确定。</p>
+    <p>这类患者过去常在初诊时就被一次性判为“不可切除”，直接进入放化疗加度伐利尤单抗巩固（PACIFIC 模式）。新辅助化免让肿瘤有机会缩小，“能否切除”的判断因此有了第二次机会。MDT-BRIDGE 要检验的，就是把这个第二次判断做成固定流程是否可行。</p>
+  </div>
+
+  <div class="defn prose">
+    <span class="tag">定义 · Mielgo-Rubio 等，Clin Transl Oncol 2026<a class="ref" href="#r8">[8]</a></span>
+    <p>交界可切除目前没有统一定义。这篇专题综述把它描述为：<strong>手术在技术上可行，但肿瘤学获益和切缘阴性都不确定</strong>。作者建议把“可切除性”（能否以有意义的获益达到 R0）和“可耐受性”（患者生理上能否承受该术式）分开评估。<span class="g g-a" title="期刊论文或官方摘要">A</span></p>
+  </div>
+
+  <figure class="fig" aria-labelledby="spec-t">
+    <p class="fig-title" id="spec-t">IIIB 期（T3–4 N2）能否切除，取决于 N2 的性质</p>
+    <p class="fig-sub">EORTC 联合 ERS、IASLC、ESTRO、ETOP IBCSG、ESTS、ESP，36 位专家三轮 Delphi，共识阈值 75%<a class="ref" href="#r6">[6]</a><span class="g g-a" title="期刊论文或官方摘要">A</span></p>
+    <div class="spec" role="list">
+      <div class="sp lv1" role="listitem"><b>单站 N2</b><span class="vd">多可切除</span></div>
+      <div class="sp lv2" role="listitem"><b>多站 N2</b><span class="vd">多不可切除</span><span class="chip">交界地带</span></div>
+      <div class="sp lv2" role="listitem"><b>巨块型 N2</b><span class="vd">多不可切除</span><span class="chip">交界地带</span></div>
+      <div class="sp lv3" role="listitem"><b>侵袭性 N2</b><span class="vd">不可切除</span></div>
+      <div class="sp lv3" role="listitem"><b>N3</b><span class="vd">不可切除</span></div>
+    </div>
+    <ul class="facts">
+      <li>IIIA 期总体归为可切除；IIIC 期不可切除</li>
+      <li>可切除性应由有经验的胸外科医生在 MDT 中判定（全体一致同意）</li>
+      <li>基线评估应包括 PET-CT、头颅 MRI 和有创纵隔分期</li>
+      <li>EORTC 系统综述另将非侵袭性 T4、多站 N2、卫星结节列为“可切除性不确定”<a class="ref" href="#r7">[7]</a><span class="g g-b" title="会议报道转述，已交叉核对">B</span></li>
+    </ul>
+    <p class="fig-note">共识原文称，N2 性质的定义仍需更多数据来细化。MDT-BRIDGE 没有采用量化标准，是否属于交界可切除由各中心 MDT 判定<a class="ref" href="#r1">[1]</a><span class="g g-a" title="期刊论文或官方摘要">A</span>，这是它的结果外推到其他中心时需要考虑的一点。</p>
+  </figure>
+</section>
+
+<section id="design" aria-labelledby="design-h">
+  <div class="prose">
+    <p class="eyebrow">设计 · Reck 等，Clin Lung Cancer 2024；ESMO 2025 LBA65</p>
+    <h2 id="design-h">研究设计：同一套诱导治疗，两个出口</h2>
+    <p>MDT-BRIDGE 是一项全球多中心、非随机 II 期研究，最终入组 142 例。<a class="ref" href="#r1">[1]</a><a class="ref" href="#r2">[2]</a><a class="ref" href="#r4">[4]</a> 它的核心设计只有一处：<strong>第 2 周期后的 MDT 再评估是强制节点</strong>，结论直接决定下一步走手术还是放化疗。</p>
+  </div>
+
+  <figure class="fig" aria-labelledby="flow-t">
+    <p class="fig-title" id="flow-t">治疗流程</p>
+    <p class="fig-sub">MDT 由肿瘤内科或呼吸肿瘤科、胸外科、放疗科、病理科组成，决策记录在病例报告表中供探索性分析<a class="ref" href="#r1">[1]</a></p>
+    <div class="dflow">
+      <div class="dn"><span class="tag">入组</span><strong>初治 IIB 至部分 IIIB（N2）期 NSCLC</strong><span class="sub">AJCC 第 8 版 · EGFR/ALK 野生型 · 基线 MDT 判定为可切除或交界可切除</span></div>
+      <div class="dl"></div>
+      <div class="dn"><span class="tag">新辅助</span><strong>度伐利尤单抗 + 含铂化疗</strong><span class="sub">每 3 周 1 次 × 2 周期</span></div>
+      <div class="dl"></div>
+      <div class="dn mdt"><span class="tag">决策节点</span><strong>第 2 周期后 MDT 强制再评估</strong><span class="sub">判定可切除或不可切除，动态决定局部治疗</span></div>
+      <div class="dl"></div>
+      <div class="dsplit">
+        <div class="dbr s"><span class="tag">判定可切除</span><ol><li>再行 1–2 周期度伐利尤单抗 + 化疗</li><li>手术</li><li>辅助度伐利尤单抗，每 4 周，至多 1 年</li></ol></div>
+        <div class="dbr c"><span class="tag">判定不可切除</span><ol><li>标准同步放化疗，约 6 周</li><li>巩固度伐利尤单抗，每 4 周，至多 1 年</li></ol></div>
+      </div>
+    </div>
+    <div class="endpoints"><span><b>主要终点</b>：手术切除率（全人群）</span><span><b>已报告的其他指标</b>：R0 切除率、pCR、客观缓解率、12 个月 EFS / PFS、安全性</span></div>
+  </figure>
+
+  <div class="elig">
+    <div class="elig-col">
+      <h4>纳入标准（注册信息）<a class="ref" href="#r4">[4]</a></h4>
+      <ul>
+        <li>基线经 MDT 评估为可切除或交界可切除</li>
+        <li>初治、病理确诊的 IIB 至部分 IIIB（N2）期，AJCC 第 8 版</li>
+        <li>淋巴结分期须经全身 FDG-PET 加活检确认（EBUS、纵隔镜或胸腔镜）</li>
+        <li>必须做头颅 MRI</li>
+        <li>EGFR 和 ALK 野生型</li>
+        <li>心肺功能可耐受切除手术</li>
+        <li>年龄 ≥18 岁；预期生存 ≥12 周；体重 ≥30 kg</li>
+      </ul>
+    </div>
+    <div class="elig-col">
+      <h4>排除标准（注册信息）<a class="ref" href="#r4">[4]</a></h4>
+      <ul>
+        <li>基线经 MDT 确认不可切除；IIIC 期</li>
+        <li>入组时计划仅行楔形切除</li>
+        <li>已知 EGFR 突变或 ALK 融合</li>
+        <li>合并症导致不能手术</li>
+        <li>多原发肿瘤</li>
+        <li>HBsAg、抗-HBc 或 HCV 抗体阳性；HIV 感染史</li>
+        <li>对研究药物过敏；妊娠或哺乳</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="results" aria-labelledby="results-h">
+  <div class="prose">
+    <p class="eyebrow">结果 · WCLC 2026 OA04.02，Martin Reck 报告，数据截止 2026-01-12</p>
+    <h2 id="results-h">主要结果：142 例患者去了哪里</h2>
+    <p>主分析的数据目前来自会议报道，尚未见全文发表。<a class="ref" href="#r3">[3]</a> 下面三行都以全部 142 例为 100%，可以看出患者在三个时间点的分布变化。</p>
+  </div>
+
+  <figure class="fig" aria-labelledby="pf-t">
+    <p class="fig-title" id="pf-t">患者流向：基线判定、再评估结论与实际治疗</p>
+    <p class="fig-sub">每行合计 142 例；悬停或聚焦色块可查看例数<span class="g g-b" title="会议报道转述，已交叉核对">B</span></p>
+    <div class="legend" aria-hidden="true"><span class="key"><i class="sw"></i>可切除 / 手术</span><span class="key"><i class="sw eosin"></i>交界或不可切除 / 放化疗</span><span class="key"><i class="sw none"></i>两种局部治疗均未接受</span></div>
+    <div class="fc">
+<div class="fc-row">
+<div class="fc-label">基线 MDT 判定<span>入组时</span></div>
+<div class="fc-bar">
+<span class="seg hema" style="flex:92 1 0" tabindex="0" role="img" aria-label="基线 MDT 判定：可切除，92 例 · 64.8%" data-v="92 例 · 64.8%" data-l="基线 MDT 判定：可切除"></span>
+<span class="seg eosin" style="flex:50 1 0" tabindex="0" role="img" aria-label="基线 MDT 判定：交界可切除，50 例 · 35.2%" data-v="50 例 · 35.2%" data-l="基线 MDT 判定：交界可切除"></span>
+</div>
+<div class="fc-sum">
+<span class="key"><i class="sw hema"></i>可切除 <b>92</b> <em>64.8%</em></span>
+<span class="key"><i class="sw eosin"></i>交界可切除 <b>50</b> <em>35.2%</em></span>
+<span class="fc-note">例数按 64.8% / 35.2% 反推</span>
+</div></div>
+<div class="fc-row">
+<div class="fc-label">第 2 周期后再评估<span>MDT 强制节点</span></div>
+<div class="fc-bar">
+<span class="seg hema" style="flex:121 1 0" tabindex="0" role="img" aria-label="第 2 周期后再评估：可切除，121 例 · 85.2%" data-v="121 例 · 85.2%" data-l="第 2 周期后再评估：可切除"></span>
+<span class="seg eosin" style="flex:21 1 0" tabindex="0" role="img" aria-label="第 2 周期后再评估：不可切除，21 例 · 14.8%" data-v="21 例 · 14.8%" data-l="第 2 周期后再评估：不可切除"></span>
+</div>
+<div class="fc-sum">
+<span class="key"><i class="sw hema"></i>可切除 <b>121</b> <em>85.2%</em></span>
+<span class="key"><i class="sw eosin"></i>不可切除 <b>21</b> <em>14.8%</em></span>
+</div></div>
+<div class="fc-row">
+<div class="fc-label">实际接受的局部治疗<span>截至 2026-01-12</span></div>
+<div class="fc-bar">
+<span class="seg hema" style="flex:106 1 0" tabindex="0" role="img" aria-label="实际接受的局部治疗：手术，106 例 · 74.6%" data-v="106 例 · 74.6%" data-l="实际接受的局部治疗：手术"></span>
+<span class="seg eosin" style="flex:25 1 0" tabindex="0" role="img" aria-label="实际接受的局部治疗：同步放化疗，25 例 · 17.6%" data-v="25 例 · 17.6%" data-l="实际接受的局部治疗：同步放化疗"></span>
+<span class="seg none" style="flex:11 1 0" tabindex="0" role="img" aria-label="实际接受的局部治疗：两者均未接受，11 例 · 7.7%" data-v="11 例 · 7.7%" data-l="实际接受的局部治疗：两者均未接受"></span>
+</div>
+<div class="fc-sum">
+<span class="key"><i class="sw hema"></i>手术 <b>106</b> <em>74.6%</em></span>
+<span class="key"><i class="sw eosin"></i>同步放化疗 <b>25</b> <em>17.6%</em></span>
+<span class="key"><i class="sw none"></i>两者均未接受 <b>11</b> <em>7.7%</em></span>
+<span class="fc-note">“两者均未接受”11 例为推算：142 − 106 − 25</span>
+</div></div>
+</div>
+    <p class="fig-note">再评估后判定可切除的有 121 例，实际手术 106 例；判定不可切除的 21 例，实际放化疗 25 例。这两处差额的含义见“读数据的五个要点”第 2 点。</p>
+  </figure>
+
+  <div class="tbl-wrap">
+    <table class="t mid">
+      <caption>关键数据与分母</caption>
+      <thead><tr><th scope="col">指标</th><th scope="col">数值</th><th scope="col">分母</th><th scope="col">来源</th></tr></thead>
+      <tbody>
+        <tr><td><b>总体切除率</b>（主要终点）</td><td class="n">74.6%（106 例）</td><td>全人群 142</td><td><span class="g g-b" title="会议报道转述，已交叉核对">B</span><a class="ref" href="#r3">[3]</a></td></tr>
+        <tr><td><b>R0 切除率</b></td><td class="n">96.2%（约 102 例<span class="g g-c" title="本文据公开数字推算">推</span>）</td><td>手术患者 106</td><td><span class="g g-b" title="会议报道转述，已交叉核对">B</span><a class="ref" href="#r3">[3]</a></td></tr>
+        <tr><td><b>根治性局部治疗率</b></td><td class="n">92.3%（131 例）</td><td>全人群 142</td><td><span class="g g-b" title="会议报道转述，已交叉核对">B</span><a class="ref" href="#r3">[3]</a></td></tr>
+        <tr><td><b>pCR</b></td><td class="n">27.3%（约 33 例<span class="g g-c" title="本文据公开数字推算">推</span>）</td><td>再评估可切除 121</td><td><span class="g g-b" title="会议报道转述，已交叉核对">B</span><a class="ref" href="#r3">[3]</a></td></tr>
+        <tr><td><b>12 个月 EFS</b></td><td class="n">90.1%</td><td>再评估可切除 121</td><td><span class="g g-b" title="会议报道转述，已交叉核对">B</span><a class="ref" href="#r3">[3]</a></td></tr>
+        <tr><td><b>12 个月 PFS</b></td><td class="n">75.1%</td><td>再评估不可切除 21</td><td><span class="g g-b" title="会议报道转述，已交叉核对">B</span><a class="ref" href="#r3">[3]</a></td></tr>
+        <tr><td><b>后续接受度伐利尤单抗</b></td><td class="n">82.4%（约 117 例<span class="g g-c" title="本文据公开数字推算">推</span>）</td><td>全人群 142</td><td><span class="g g-b" title="会议报道转述，已交叉核对">B</span><a class="ref" href="#r3">[3]</a></td></tr>
+        <tr><td><b>3/4 级不良事件</b>（辅助或巩固阶段）</td><td class="n">手术组 7.4%；放化疗组 17.4%</td><td>各自治疗组</td><td><span class="g g-b" title="会议报道转述，已交叉核对">B</span><a class="ref" href="#r3">[3]</a></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="scroll-hint">表格可左右滑动查看</p>
+
+  <figure class="fig" aria-labelledby="db-t">
+    <p class="fig-title" id="db-t">中期分析与主分析对比</p>
+    <p class="fig-sub">ESMO 2025 LBA65（n=84，数据截止 2025-05-08）<a class="ref" href="#r2">[2]</a><span class="g g-a" title="期刊论文或官方摘要">A</span> 对比 WCLC 2026 主分析（n=142）<a class="ref" href="#r3">[3]</a><span class="g g-b" title="会议报道转述，已交叉核对">B</span></p>
+    <div class="legend" aria-hidden="true"><span class="key"><i class="sw ring"></i>中期分析 · n=84</span><span class="key"><i class="sw dot"></i>主分析 · n=142</span></div>
+    <div class="dbl">
+<div class="dbl-row">
+<div class="dbl-label">根治性局部治疗率<span>手术或放化疗 / 全人群</span></div>
+<div class="dbl-track">
+<span class="dbl-conn" style="left:92.3%;width:2.9000000000000057%"></span>
+<span class="dbl-dot i" style="left:95.2%" tabindex="0" role="img" aria-label="根治性局部治疗率，ESMO 2025 中期 95.2%" data-v="95.2%" data-l="根治性局部治疗率 · ESMO 2025 中期（n=84）"></span>
+<span class="dbl-dot f" style="left:92.3%" tabindex="0" role="img" aria-label="根治性局部治疗率，WCLC 2026 主分析 92.3%" data-v="92.3%" data-l="根治性局部治疗率 · WCLC 2026 主分析（n=142）"></span>
+</div>
+<div class="dbl-val"><b>95.2% → 92.3%</b><span>−2.9 个百分点</span></div>
+</div>
+<div class="dbl-row">
+<div class="dbl-label">总体切除率<span>主要终点 / 全人群</span></div>
+<div class="dbl-track">
+<span class="dbl-conn" style="left:74.6%;width:11.100000000000009%"></span>
+<span class="dbl-dot i" style="left:85.7%" tabindex="0" role="img" aria-label="总体切除率，ESMO 2025 中期 85.7%" data-v="85.7%" data-l="总体切除率 · ESMO 2025 中期（n=84）"></span>
+<span class="dbl-dot f" style="left:74.6%" tabindex="0" role="img" aria-label="总体切除率，WCLC 2026 主分析 74.6%" data-v="74.6%" data-l="总体切除率 · WCLC 2026 主分析（n=142）"></span>
+</div>
+<div class="dbl-val"><b>85.7% → 74.6%</b><span>−11.1 个百分点</span></div>
+</div>
+<div class="dbl-row">
+<div class="dbl-label">R0 切除率<span>分母为手术患者</span></div>
+<div class="dbl-track">
+<span class="dbl-conn" style="left:94.4%;width:1.7999999999999972%"></span>
+<span class="dbl-dot i" style="left:94.4%" tabindex="0" role="img" aria-label="R0 切除率，ESMO 2025 中期 94.4%" data-v="94.4%" data-l="R0 切除率 · ESMO 2025 中期（n=84）"></span>
+<span class="dbl-dot f" style="left:96.2%" tabindex="0" role="img" aria-label="R0 切除率，WCLC 2026 主分析 96.2%" data-v="96.2%" data-l="R0 切除率 · WCLC 2026 主分析（n=142）"></span>
+</div>
+<div class="dbl-val"><b>94.4% → 96.2%</b><span>+1.8 个百分点</span></div>
+</div>
+<div class="dbl-row">
+<div class="dbl-label">pCR<span>分母为再评估可切除者</span></div>
+<div class="dbl-track">
+<span class="dbl-conn" style="left:27.3%;width:0.3000000000000007%"></span>
+<span class="dbl-dot i" style="left:27.6%" tabindex="0" role="img" aria-label="pCR，ESMO 2025 中期 27.6%" data-v="27.6%" data-l="pCR · ESMO 2025 中期（n=84）"></span>
+<span class="dbl-dot f" style="left:27.3%" tabindex="0" role="img" aria-label="pCR，WCLC 2026 主分析 27.3%" data-v="27.3%" data-l="pCR · WCLC 2026 主分析（n=142）"></span>
+</div>
+<div class="dbl-val"><b>27.6% → 27.3%</b><span>−0.3 个百分点</span></div>
+</div>
+<div class="dbl-axis"><div></div><div class="ticks"><span style="left:0%">0%</span><span style="left:25%">25%</span><span style="left:50%">50%</span><span style="left:75%">75%</span><span style="left:100%">100%</span></div><div></div></div>
+</div>
+    <p class="fig-note">R0 率和 pCR 基本稳定，变化最大的是切除率，下降了 11.1 个百分点。中期安全性：无治疗相关死亡，未见间质性肺炎，停药率 5.6%。<a class="ref" href="#r5">[5]</a><span class="g g-b" title="会议报道转述，已交叉核对">B</span></p>
+  </figure>
+</section>
+
+<section id="read" aria-labelledby="read-h">
+  <div class="prose">
+    <p class="eyebrow">解读 · 以下推算均写明算式，便于复核</p>
+    <h2 id="read-h">读数据的五个要点</h2>
+  </div>
+  <ol class="points">
+    <li>
+      <h3>74.6% 不是“交界可切除的转化率”</h3>
+      <ul>
+        <li>分母是全部 142 例，其中 92 例基线就判定可切除。</li>
+        <li>交界可切除亚组目前只有中期数据：<strong>28 例中 23 例（82.1%）在再评估时被判定为可切除</strong><a class="ref" href="#r5">[5]</a><span class="g g-b" title="会议报道转述，已交叉核对">B</span>，<strong>20 例（71.4%）最终完成切除</strong><a class="ref" href="#r5">[5]</a><span class="g g-a" title="期刊论文或官方摘要">A</span>。</li>
+        <li>主分析（142 例）中交界可切除亚组的切除率，我们没有找到公开来源。</li>
+      </ul>
+    </li>
+    <li>
+      <h3>121 与 106 之间差了 15 人</h3>
+      <ul>
+        <li>再评估判定可切除 121 例，实际手术 106 例。</li>
+        <li>放化疗 25 例，比判定不可切除的 21 例多，说明<strong>至少有 4 例被判定可切除的患者最终改做放化疗</strong><span class="g g-c" title="本文据公开数字推算">推</span><span class="calc">25 − 21 = 4</span></li>
+        <li>另有 <strong>11 例（7.7%）既没手术也没放化疗</strong><span class="g g-c" title="本文据公开数字推算">推</span><span class="calc">142 − 106 − 25 = 11</span>。这些患者的去向（疾病进展、不能耐受、拒绝手术等），是全文发表时最值得看的细节。</li>
+      </ul>
+    </li>
+    <li>
+      <h3>后入组患者的切除率明显偏低</h3>
+      <ul>
+        <li>中期分析 84 例中 72 例手术（85.7%）；主分析 142 例中 106 例手术（74.6%）。</li>
+        <li>假设中期人群完全包含在主分析中且状态未变，那么后来新增的 58 例中只有 <strong>34 例手术（约 59%）</strong>，放化疗 17 例（约 29%）<span class="g g-c" title="本文据公开数字推算">推</span><span class="calc">106 − 72 = 34；25 − 8 = 17</span></li>
+        <li>新增患者中交界可切除约占 37.9%（22/58），中期人群为 33.3%（28/84）<span class="g g-c" title="本文据公开数字推算">推</span>，病例构成的这点变化不足以解释上述落差。可能的原因包括新加入中心的外科标准不同、病例构成变化，或部分患者在数据截止时尚未完成手术，需要全文数据验证。</li>
+      </ul>
+    </li>
+    <li>
+      <h3>pCR 必须先对齐分母</h3>
+      <ul>
+        <li>27.3% 的分母是再评估可切除的 121 例（含未手术者），约 33 例<span class="g g-c" title="本文据公开数字推算">推</span>。按实际手术的 106 例计约 31.1%，按全人群 142 例计约 23.2%<span class="g g-c" title="本文据公开数字推算">推</span><span class="calc">33/106；33/142</span></li>
+        <li>无论哪种口径，都<strong>不能与 AEGEAN 的 17.2% 直接比较</strong>：AEGEAN 是随机对照研究的意向治疗人群，MDT-BRIDGE 是单臂研究，入组本身经过筛选。</li>
+      </ul>
+    </li>
+    <li>
+      <h3>生存数据还很早</h3>
+      <ul>
+        <li>12 个月 EFS 90.1% 是里程碑率，不是中位生存；目前没有中位 EFS、OS 和 KM 曲线。按二项分布粗略估算（n=121），95% 置信区间约为 83%–94%<span class="g g-c" title="本文据公开数字推算">推</span>。</li>
+        <li>不可切除组只有 21 例，12 个月 PFS 75.1% 的 95% 置信区间按同法粗估约为 54%–89%<span class="g g-c" title="本文据公开数字推算">推</span>，精度有限。</li>
+        <li>没有对照组，无法回答“先化免再评估”是否优于直接放化疗或直接手术。</li>
+      </ul>
+    </li>
+  </ol>
+
+  <div class="unverified">
+    <h3>网络上流传、但我们未能核实的数字<span class="g g-x" title="未找到出处，未采用">未核实</span></h3>
+    <p>以下数字出现在部分第三方解读中。我们没有在会议摘要或公开报道里找到出处，因此本页不采用。</p>
+    <ul>
+      <li>交界可切除组 31/50（62.0%）完成切除；基线可切除组 75/92（81.5%）。两者相加正好 106，内部自洽，但未找到出处。</li>
+      <li>全人群 12 个月 EFS 88.5%。</li>
+      <li>全人群 pCR 23.2%：可以由 33/142 推出，但原报告是否按这一口径报告，未知。</li>
+      <li>人群构成（如欧洲患者占 90.8%）与安全性细项（如 3/4 级不良事件 47.2%）。</li>
+      <li>另外，有解读把 ESMO 2025 的 82% 与上述 62.0% 的差异归因于“样本扩大”，这不成立：82.1% 是再评估时判定可切除的比例，62.0% 是实际切除的比例，本来就是两个不同的指标。</li>
+    </ul>
+  </div>
+</section>
+
+<section id="evidence" aria-labelledby="ev-h">
+  <div class="prose">
+    <p class="eyebrow">证据链 · 围手术期免疫与 III 期相关研究，截至 2026 年 9 月</p>
+    <h2 id="ev-h">放进证据链：它连接的是哪两端</h2>
+    <p>MDT-BRIDGE 两条路径的方案，都来自已有的 III 期证据。它新增的，是中间那个分流节点。</p>
+  </div>
+
+  <div class="bridge">
+    <div class="br"><span class="tag">手术这一端</span><b>AEGEAN<a class="ref" href="#r12">[12]</a></b><span>可切除 IIA–IIIB（N2）期</span><span>围手术期度伐利尤单抗 + 化疗</span><span class="res">pCR 17.2% vs 4.3% · EFS HR 0.68</span></div>
+    <div class="br-link" aria-hidden="true"></div>
+    <div class="br mid"><span class="tag">分流节点</span><b>MDT-BRIDGE</b><span>同一诱导方案，第 2 周期后 MDT 决定去向</span><span class="res">切除 74.6% · 局部治疗 92.3%</span></div>
+    <div class="br-link" aria-hidden="true"></div>
+    <div class="br"><span class="tag">放化疗这一端</span><b>PACIFIC<a class="ref" href="#r15">[15]</a></b><span>不可切除 III 期</span><span>同步放化疗后度伐利尤单抗巩固</span><span class="res">5 年 OS 42.9% vs 33.4% · HR 0.72</span></div>
+  </div>
+
+  <figure class="fig" aria-labelledby="fp-t">
+    <p class="fig-title" id="fp-t">围手术期免疫 III 期研究：EFS 与 OS 风险比</p>
+    <p class="fig-sub">实心方块为达到统计学意义，空心为未达到；横线为 95% 置信区间</p>
+    <div class="fp"><div class="fp-group">无事件生存（EFS）</div><div class="fp-row">
+<div class="fp-name"><b>CheckMate 816<span class="g g-a" title="期刊论文或官方摘要">A</span><a class="ref" href="#r10">[10]</a></b><span>新辅助纳武利尤单抗 · 5 年更新</span></div>
+<div class="fp-plot">
+<span class="fp-ref" style="left:66.10%"></span>
+<span class="fp-ci" style="left:17.52%;width:41.77%"></span>
+<span class="fp-pt" style="left:38.28%" tabindex="0" role="img" aria-label="CheckMate 816 · EFS · 达到统计学意义，HR 0.68（0.51–0.91）" data-v="HR 0.68（0.51–0.91）" data-l="CheckMate 816 · EFS · 达到统计学意义"></span>
+</div>
+<div class="fp-val">0.68 <small>(0.51–0.91)</small><span>达到统计学意义</span></div>
+</div>
+<div class="fp-row">
+<div class="fp-name"><b>KEYNOTE-671<span class="g g-a" title="期刊论文或官方摘要">A</span><a class="ref" href="#r11">[11]</a></b><span>围手术期帕博利珠单抗 · 5 年更新</span></div>
+<div class="fp-plot">
+<span class="fp-ref" style="left:66.10%"></span>
+<span class="fp-ci" style="left:13.15%;width:26.18%"></span>
+<span class="fp-pt" style="left:26.80%" tabindex="0" role="img" aria-label="KEYNOTE-671 · EFS · 达到统计学意义，HR 0.58（0.48–0.69）" data-v="HR 0.58（0.48–0.69）" data-l="KEYNOTE-671 · EFS · 达到统计学意义"></span>
+</div>
+<div class="fp-val">0.58 <small>(0.48–0.69)</small><span>达到统计学意义</span></div>
+</div>
+<div class="fp-row">
+<div class="fp-name"><b>AEGEAN<span class="g g-a" title="期刊论文或官方摘要">A</span><a class="ref" href="#r12">[12]</a></b><span>围手术期度伐利尤单抗 · 更新分析</span></div>
+<div class="fp-plot">
+<span class="fp-ref" style="left:66.10%"></span>
+<span class="fp-ci" style="left:22.97%;width:33.90%"></span>
+<span class="fp-pt" style="left:39.33%" tabindex="0" role="img" aria-label="AEGEAN · EFS · 达到统计学意义，HR 0.69（0.55–0.88）" data-v="HR 0.69（0.55–0.88）" data-l="AEGEAN · EFS · 达到统计学意义"></span>
+</div>
+<div class="fp-val">0.69 <small>(0.55–0.88)</small><span>达到统计学意义</span></div>
+</div>
+<div class="fp-row">
+<div class="fp-name"><b>CheckMate 77T<span class="g g-a" title="期刊论文或官方摘要">A</span><a class="ref" href="#r13">[13]</a></b><span>围手术期纳武利尤单抗 · 更新分析</span></div>
+<div class="fp-plot">
+<span class="fp-ref" style="left:66.10%"></span>
+<span class="fp-ci" style="left:8.50%;width:40.60%"></span>
+<span class="fp-pt" style="left:28.04%" tabindex="0" role="img" aria-label="CheckMate 77T · EFS · 达到统计学意义，HR 0.59（0.45–0.79）" data-v="HR 0.59（0.45–0.79）" data-l="CheckMate 77T · EFS · 达到统计学意义"></span>
+</div>
+<div class="fp-val">0.59 <small>(0.45–0.79)</small><span>达到统计学意义</span></div>
+</div>
+<div class="fp-row">
+<div class="fp-name"><b>IMpower030<span class="g g-b" title="会议报道转述，已交叉核对">B</span><a class="ref" href="#r16">[16]</a></b><span>围手术期阿替利珠单抗 · WCLC 2026</span></div>
+<div class="fp-plot">
+<span class="fp-ref" style="left:66.10%"></span>
+<span class="fp-ci" style="left:26.80%;width:40.72%"></span>
+<span class="fp-pt ns" style="left:47.24%" tabindex="0" role="img" aria-label="IMpower030 · EFS · 未达统计学意义，HR 0.77（0.58–1.02）" data-v="HR 0.77（0.58–1.02）" data-l="IMpower030 · EFS · 未达统计学意义"></span>
+</div>
+<div class="fp-val">0.77 <small>(0.58–1.02)</small><span>未达统计学意义</span></div>
+</div><div class="fp-group">总生存（OS）</div><div class="fp-row">
+<div class="fp-name"><b>CheckMate 816<span class="g g-a" title="期刊论文或官方摘要">A</span><a class="ref" href="#r10">[10]</a></b><span>5 年 OS 65.4% vs 55.0%</span></div>
+<div class="fp-plot">
+<span class="fp-ref" style="left:66.10%"></span>
+<span class="fp-ci" style="left:19.34%;width:46.61%"></span>
+<span class="fp-pt" style="left:42.40%" tabindex="0" role="img" aria-label="CheckMate 816 · OS · 达到统计学意义，HR 0.72（0.523–0.998）" data-v="HR 0.72（0.523–0.998）" data-l="CheckMate 816 · OS · 达到统计学意义"></span>
+</div>
+<div class="fp-val">0.72 <small>(0.523–0.998)</small><span>达到统计学意义</span></div>
+</div>
+<div class="fp-row">
+<div class="fp-name"><b>KEYNOTE-671<span class="g g-a" title="期刊论文或官方摘要">A</span><a class="ref" href="#r11">[11]</a></b><span>5 年 OS 64.6% vs 53.6%</span></div>
+<div class="fp-plot">
+<span class="fp-ref" style="left:66.10%"></span>
+<span class="fp-ci" style="left:28.04%;width:32.05%"></span>
+<span class="fp-pt" style="left:44.38%" tabindex="0" role="img" aria-label="KEYNOTE-671 · OS · 达到统计学意义，HR 0.74（0.59–0.92）" data-v="HR 0.74（0.59–0.92）" data-l="KEYNOTE-671 · OS · 达到统计学意义"></span>
+</div>
+<div class="fp-val">0.74 <small>(0.59–0.92)</small><span>达到统计学意义</span></div>
+</div>
+<div class="fp-row">
+<div class="fp-name"><b>AEGEAN<span class="g g-a" title="期刊论文或官方摘要">A</span><a class="ref" href="#r12">[12]</a></b><span>中期分析 · 数据成熟度 35%</span></div>
+<div class="fp-plot">
+<span class="fp-ref" style="left:66.10%"></span>
+<span class="fp-ci" style="left:40.37%;width:35.18%"></span>
+<span class="fp-pt ns" style="left:57.69%" tabindex="0" role="img" aria-label="AEGEAN · OS · 未达统计学意义，HR 0.89（0.70–1.14）" data-v="HR 0.89（0.70–1.14）" data-l="AEGEAN · OS · 未达统计学意义"></span>
+</div>
+<div class="fp-val">0.89 <small>(0.70–1.14)</small><span>未达统计学意义</span></div>
+</div>
+<div class="fp-row">
+<div class="fp-name"><b>IMpower030<span class="g g-b" title="会议报道转述，已交叉核对">B</span><a class="ref" href="#r16">[16]</a></b><span>WCLC 2026</span></div>
+<div class="fp-plot">
+<span class="fp-ref" style="left:66.10%"></span>
+<span class="fp-ci" style="left:25.55%;width:44.07%"></span>
+<span class="fp-pt ns" style="left:47.24%" tabindex="0" role="img" aria-label="IMpower030 · OS · 未达统计学意义，HR 0.77（0.57–1.05）" data-v="HR 0.77（0.57–1.05）" data-l="IMpower030 · OS · 未达统计学意义"></span>
+</div>
+<div class="fp-val">0.77 <small>(0.57–1.05)</small><span>未达统计学意义</span></div>
+</div><div class="fp-row fp-empty"><div class="fp-name"><b>CheckMate 77T</b><span>OS 数据尚未成熟，未纳入</span></div><div class="fp-plot"></div><div class="fp-val">—</div></div><div class="fp-axis"><div class="fp-axis-cap">风险比（对数刻度）</div><div class="fp-ticks"><span style="left:0.00%">0.4</span><span style="left:16.10%">0.5</span><span style="left:40.37%">0.7</span><span style="left:66.10%">1.0</span><span style="left:90.37%">1.4</span><em class="fp-dir l" style="right:35.40%">← 免疫组更优</em><em class="fp-dir r" style="left:67.60%">对照组更优 →</em></div><div></div></div></div>
+    <p class="fig-note">各研究的人群、分期版本和随访时间不同，本图用来看方向和精度，不用来排名。CheckMate 816 主分析 EFS HR 为 0.63，图中为 5 年更新值；IMpower030 的 HR 与置信区间仅见于中文会议报道<a class="ref" href="#r16">[16]</a>。</p>
+  </figure>
+
+  <div class="tbl-wrap">
+    <table class="t wide">
+      <caption>主要研究：设计与结果</caption><colgroup><col style="width:12%"><col style="width:15%"><col style="width:27%"><col style="width:8%"><col style="width:12%"><col style="width:12%"><col style="width:14%"></colgroup>
+      <thead><tr><th scope="col">研究</th><th scope="col">人群（分期版本）</th><th scope="col">方案</th><th scope="col">例数</th><th scope="col">pCR</th><th scope="col">EFS / PFS HR</th><th scope="col">OS HR</th></tr></thead>
+      <tbody>
+        <tr><td><b>CheckMate 816</b><a class="ref" href="#r10">[10]</a></td><td>IB（≥4 cm）–IIIA（第 7 版）</td><td>纳武利尤单抗 360 mg + 含铂化疗 ×3 → 手术；无术后免疫</td><td class="n">358</td><td class="n">24.0% vs 2.2%</td><td class="n">0.63（5 年 0.68）</td><td class="n">0.72；5 年 65.4% vs 55.0%</td></tr>
+        <tr><td><b>KEYNOTE-671</b><a class="ref" href="#r11">[11]</a></td><td>II–IIIB（N2）（第 8 版）</td><td>帕博利珠单抗 200 mg + 顺铂双药 ×4 → 手术 → 帕博利珠单抗 ×13</td><td class="n">797</td><td class="n">18.1% vs 4.0%</td><td class="n">0.58</td><td class="n">0.74；5 年 64.6% vs 53.6%</td></tr>
+        <tr><td><b>AEGEAN</b><a class="ref" href="#r12">[12]</a></td><td>IIA–IIIB（N2）（第 8 版）</td><td>度伐利尤单抗 1500 mg + 含铂化疗 ×4 → 手术 → 度伐利尤单抗 ×12</td><td class="n">802（mITT 740）</td><td class="n">17.2% vs 4.3%</td><td class="n">0.68（更新 0.69）</td><td class="n">0.89（中期，未达显著）</td></tr>
+        <tr><td><b>CheckMate 77T</b><a class="ref" href="#r13">[13]</a></td><td>II–IIIB（第 8 版）</td><td>纳武利尤单抗 + 化疗 ×4 → 手术 → 纳武利尤单抗至多 1 年</td><td class="n">461</td><td class="n">25.3% vs 4.7%</td><td class="n">0.59（更新）</td><td>未成熟</td></tr>
+        <tr><td><b>NADIM II</b><a class="ref" href="#r14">[14]</a></td><td>可切除 IIIA–IIIB</td><td>纳武利尤单抗 + 化疗 ×3 → 手术 → 纳武利尤单抗辅助；对照为单纯化疗（2:1 随机，II 期）</td><td class="n">86</td><td class="n">37% vs 7%</td><td class="n">PFS 0.47</td><td class="n">0.43</td></tr>
+        <tr><td><b>IMpower030</b><a class="ref" href="#r16">[16]</a></td><td>II–IIIB</td><td>阿替利珠单抗 + 含铂化疗 → 手术 → 阿替利珠单抗辅助</td><td class="n">—</td><td class="n">约 30% vs 9%</td><td class="n">0.77（P=0.07）<span class="g g-b" title="会议报道转述，已交叉核对">B</span></td><td class="n">0.77<span class="g g-b" title="会议报道转述，已交叉核对">B</span></td></tr>
+        <tr><td><b>PACIFIC</b><a class="ref" href="#r15">[15]</a></td><td>不可切除 III 期</td><td>同步放化疗后度伐利尤单抗 vs 安慰剂，至多 12 个月</td><td class="n">713</td><td>—</td><td class="n">PFS 0.55</td><td class="n">0.72；5 年 42.9% vs 33.4%</td></tr>
+        <tr class="hl"><td><b>MDT-BRIDGE</b><a class="ref" href="#r3">[3]</a></td><td>IIB–IIIB（N2）（第 8 版），可切除 + 交界可切除</td><td>度伐利尤单抗 + 化疗 ×2 → MDT 再评估 → 手术或放化疗 → 度伐利尤单抗</td><td class="n">142</td><td class="n">27.3%（再评估可切除组）</td><td class="n">单臂；12 个月 EFS 90.1%</td><td>未报告</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="scroll-hint">表格可左右滑动查看</p>
+
+  <div class="tbl-wrap">
+    <table class="t wide">
+      <caption>入组标准的关键差异</caption><colgroup><col style="width:13%"><col style="width:17%"><col style="width:15%"><col style="width:15%"><col style="width:12%"><col style="width:14%"><col style="width:14%"></colgroup>
+      <thead><tr><th scope="col">研究</th><th scope="col">PD-L1 门槛</th><th scope="col">EGFR / ALK</th><th scope="col">纵隔病理分期</th><th scope="col">头颅影像</th><th scope="col">全肺切除</th><th scope="col">交界可切除</th></tr></thead>
+      <tbody>
+        <tr><td><b>CheckMate 816</b><a class="ref" href="#r17">[17]</a></td><td>不限（按 ≥1% / &lt;1% 分层）</td><td>排除已知阳性</td><td>可疑淋巴结须病理确认</td><td>标准未列</td><td>未排除</td><td>未专门纳入</td></tr>
+        <tr><td><b>KEYNOTE-671</b><a class="ref" href="#r17">[17]</a></td><td>不限（按 ≥50% / &lt;50% 分层）</td><td>未强制检测或排除</td><td>标准未列</td><td>标准未列</td><td>未排除</td><td>未专门纳入</td></tr>
+        <tr><td><b>AEGEAN</b><a class="ref" href="#r12">[12]</a></td><td>不限（须随机前用 SP263 检测）</td><td>须随机前检测，阳性排除</td><td>标准未列</td><td>排除脑转移</td><td><b>排除</b></td><td>未专门纳入</td></tr>
+        <tr class="hl"><td><b>MDT-BRIDGE</b><a class="ref" href="#r4">[4]</a></td><td>不限</td><td>须为野生型</td><td><b>强制</b>（PET + 活检）</td><td><b>强制头颅 MRI</b></td><td>未排除（仅排除计划楔形切除）</td><td><b>专门纳入</b></td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="scroll-hint">表格可左右滑动查看</p>
+</section>
+
+<section id="faq" aria-labelledby="faq-h">
+  <div class="faq">
+    <p class="eyebrow">问答 · 临床讨论中常被问到的三件事</p>
+    <h2 id="faq-h">常见问题</h2>
+
+    <h3 class="first">三项研究里的“IIIA”，是同一群患者吗？</h3>
+    <p>不是。CheckMate 816 用的是 AJCC 第 7 版，KEYNOTE-671 和 AEGEAN 用的是第 8 版。同样叫 IIIA，包含的 TNM 组合不同：</p>
+    <ul>
+      <li><strong>T3N2</strong>：第 7 版属于 IIIA，第 8 版属于 IIIB。CheckMate 816 的 IIIA 已经包含了一部分“第 8 版 IIIB”患者。</li>
+      <li><strong>5–7 cm 伴 N1</strong>：第 7 版为 T2bN1（IIB），第 8 版为 T3N1（IIIA）。<strong>&gt;7 cm 不伴淋巴结转移</strong>：第 7 版为 T3N0（IIB），第 8 版为 T4N0（IIIA）。第 8 版的 IIIA 因此多了一部分病情相对较轻的患者。</li>
+      <li>KEYNOTE-671 和 AEGEAN 还纳入了第 8 版中 N2 的 IIIB（T3–4 N2），但都排除 N3。</li>
+    </ul>
+  </div>
+  <div class="tnm-grid">
+    <div class="tnm-box"><div class="tnm-cap">第 7 版（CheckMate 816）</div><div class="tnm-scroll"><table class="tnm"><thead><tr><th></th><th scope="col">N0</th><th scope="col">N1</th><th scope="col">N2</th><th scope="col">N3</th></tr></thead><tbody><tr><th scope="row">T1</th><td class="">IA</td><td class="">IIA</td><td class="a">IIIA</td><td class="">IIIB</td></tr><tr><th scope="row">T2a</th><td class="">IB</td><td class="">IIA</td><td class="a">IIIA</td><td class="">IIIB</td></tr><tr><th scope="row">T2b</th><td class="">IIA</td><td class="">IIB</td><td class="a">IIIA</td><td class="">IIIB</td></tr><tr><th scope="row">T3</th><td class="">IIB</td><td class="a">IIIA</td><td class="a star">IIIA*</td><td class="">IIIB</td></tr><tr><th scope="row">T4</th><td class="a">IIIA</td><td class="a">IIIA</td><td class="">IIIB</td><td class="">IIIB</td></tr></tbody></table></div></div>
+    <div class="tnm-box"><div class="tnm-cap">第 8 版（KEYNOTE-671、AEGEAN）</div><div class="tnm-scroll"><table class="tnm"><thead><tr><th></th><th scope="col">N0</th><th scope="col">N1</th><th scope="col">N2</th><th scope="col">N3</th></tr></thead><tbody><tr><th scope="row">T1a–c</th><td class="">IA</td><td class="">IIB</td><td class="a">IIIA</td><td class="">IIIB</td></tr><tr><th scope="row">T2a</th><td class="">IB</td><td class="">IIB</td><td class="a">IIIA</td><td class="">IIIB</td></tr><tr><th scope="row">T2b</th><td class="">IIA</td><td class="">IIB</td><td class="a">IIIA</td><td class="">IIIB</td></tr><tr><th scope="row">T3</th><td class="">IIB</td><td class="a">IIIA</td><td class="b">IIIB†</td><td class="">IIIC</td></tr><tr><th scope="row">T4</th><td class="a">IIIA</td><td class="a">IIIA</td><td class="b">IIIB†</td><td class="">IIIC</td></tr></tbody></table></div></div>
+  </div>
+  <div class="tnm-legend faq"><span class="key"><i class="sw a"></i>IIIA</span><span class="key"><i class="sw b"></i>第 8 版研究额外纳入的 IIIB（N2）</span><span>* 第 7 版 T3N2 在第 8 版中属于 IIIB</span></div>
+  <div class="faq">
+    <p>2025 年 1 月起启用的第 9 版把 N2 拆为 <strong>N2a（单站）</strong>和 <strong>N2b（多站）</strong>，III 期分组随之调整：T1N2a 由 IIIA 降为 IIB，T2N2b 由 IIIA 升为 IIIB，T1N1 由 IIB 降为 IIA。按第 9 版，IIIA 为 T1N2b、T2N2a、T3N1、T4N0–1。<a class="ref" href="#r19">[19]</a><span class="g g-b" title="会议报道转述，已交叉核对">B</span> 今后解读新研究时，还要多留意一层版本差异。</p>
+
+    <h3>PD-L1 表达是入组条件吗？</h3>
+    <p>不是。四项研究都不设 PD-L1 门槛。CheckMate 816、KEYNOTE-671 和 AEGEAN 要求提供肿瘤组织检测 PD-L1，并以 PD-L1 作为随机分层因素；MDT-BRIDGE 的注册标准中没有 PD-L1 相关条款。<a class="ref" href="#r17">[17]</a><a class="ref" href="#r12">[12]</a><a class="ref" href="#r4">[4]</a> KEYNOTE-671 各亚组均获益，PD-L1 越高获益幅度越大。<a class="ref" href="#r11">[11]</a><span class="g g-a" title="期刊论文或官方摘要">A</span> 在欧盟，三种方案获批的适应证并不相同：</p>
+    <div class="approvals">
+      <div class="ap"><b>CheckMate 816</b><span class="yr">欧盟 2023</span><p>新辅助纳武利尤单抗 + 化疗，限 <strong>PD-L1 ≥1%</strong>、复发风险高的可切除 NSCLC<a class="ref" href="#r18">[18]</a><span class="g g-a" title="期刊论文或官方摘要">A</span></p></div>
+      <div class="ap"><b>KEYNOTE-671</b><span class="yr">欧盟 2024-03-28</span><p>围手术期帕博利珠单抗，复发风险高的可切除 NSCLC，<strong>不限 PD-L1</strong><a class="ref" href="#r18">[18]</a><span class="g g-a" title="期刊论文或官方摘要">A</span></p></div>
+      <div class="ap"><b>AEGEAN</b><span class="yr">欧盟 2025-04-04</span><p>围手术期度伐利尤单抗，复发风险高且<strong>无 EGFR 突变或 ALK 重排</strong>，不设 PD-L1 门槛<a class="ref" href="#r18">[18]</a><span class="g g-a" title="期刊论文或官方摘要">A</span></p></div>
+    </div>
+
+    <h3>IIIA 期都需要术前新辅助吗？</h3>
+    <ul>
+      <li><strong>EGFR/ALK 阴性的可切除 IIIA</strong>：新辅助或围手术期化疗联合免疫已是主流选择。CheckMate 816、KEYNOTE-671、AEGEAN、CheckMate 77T 以及以中国人群为主的 Neotorch、RATIONALE-315 均为阳性，其中 CheckMate 816 和 KEYNOTE-671 已证实 OS 获益。</li>
+      <li><strong>EGFR/ALK 阳性</strong>：一般不做新辅助免疫，以手术加辅助靶向为主（EGFR 用奥希替尼，ALK 用阿来替尼）；新辅助靶向已有 III 期数据，地位仍在确立。</li>
+      <li><strong>多站或巨块型 N2</strong>：属于交界地带，由 MDT 个体化决定。MDT-BRIDGE 提供了“先化免、再评估”的一条路径。</li>
+      <li><strong>开始新辅助前</strong>：先完成驱动基因检测（至少 EGFR、ALK）、PD-L1、纵隔病理分期和头颅 MRI。</li>
+    </ul>
+  </div>
+</section>
+
+<section id="practice" aria-labelledby="pr-h">
+  <div class="prose">
+    <p class="eyebrow">落地 · 据 MDT-BRIDGE 设计整理，供本中心流程参考</p>
+    <h2 id="pr-h">临床落地：把再评估节点写进流程</h2>
+  </div>
+
+  <div class="verdict">
+    <span class="tag">是否改变临床实践</span>
+    <h3>改变流程，暂不改变方案</h3>
+    <ul>
+      <li><strong>对可切除患者</strong>：MDT-BRIDGE 没有提供超出 AEGEAN 的新证据。</li>
+      <li><strong>对交界可切除患者</strong>：这是目前专门纳入交界可切除人群、预设再评估节点的前瞻性多中心研究；中期数据显示约七成最终完成切除。可以作为 MDT 讨论的依据，但还不能替代标准路径。</li>
+      <li><strong>还需要等待</strong>：全文发表（交界亚组结果、未治疗患者的去向）、成熟的 EFS 和 OS，以及有对照的研究设计。</li>
+    </ul>
+  </div>
+
+  <ol class="steps">
+    <li><b>基线分期</b><p>PET-CT、头颅 MRI，EBUS 或纵隔镜病理确认 N 分期；EGFR/ALK（建议扩展基因检测）与 PD-L1；肺功能和心功能评估。</p></li>
+    <li><b>基线 MDT</b><p>胸外科必须在场。结论分为可切除、交界可切除、不可切除三类，并写明依据，例如“多站 N2”“巨块型 N2”“非侵袭性 T4”。</p></li>
+    <li><b>新辅助 2 周期</b><p>MDT-BRIDGE 使用度伐利尤单抗联合含铂化疗，每 3 周 1 次。</p></li>
+    <li><b>第 2 周期后再评估（固定节点）</b><p>复查 CT，必要时 PET-CT，重新评估心肺功能；MDT 给出手术或放化疗的明确结论。</p></li>
+    <li><b>按结论分流</b><p>可切除：再行 1–2 周期后手术，术后辅助免疫。不可切除：同步放化疗，之后巩固度伐利尤单抗。</p></li>
+    <li><b>记录每位患者的去向</b><p>包括没有手术、也没有放化疗的原因。MDT-BRIDGE 中 121 与 106 之间的差额说明，这一环最容易被忽略。</p></li>
+  </ol>
+</section>
+
+<section id="refs" aria-labelledby="refs-h">
+  <p class="eyebrow">来源 · 链接均可直接打开核对</p>
+  <h2 id="refs-h">参考文献</h2>
+  <ol class="refs">
+    <li id="r1">Reck M, et al. MDT-BRIDGE: study design. <i>Clin Lung Cancer</i>. 2024;25(6):587–593.e3. <a href="https://www.sciencedirect.com/science/article/pii/S1525730424001323">ScienceDirect</a></li>
+    <li id="r2">Reck M, et al. MDT-BRIDGE interim analysis. ESMO 2025, LBA65. <a href="https://s3.eu-central-1.amazonaws.com/m-anage.com.storage.esmo/static/esmo2025_abstracts/LBA65.html.pdf">摘要 PDF</a></li>
+    <li id="r3">Reck M, et al. MDT-BRIDGE primary analysis. WCLC 2026, OA04.02. 会议报道：<a href="https://news.qq.com/rain/a/20260911A0F0ZI00">腾讯新闻</a>；<a href="https://oncodaily.com/oncolibrary/lung-oncology/wclc-2026">OncoDaily</a></li>
+    <li id="r4">NCT05925530 注册信息：<a href="https://www.centerwatch.com/clinical-trials/listings/NCT05925530/">CenterWatch</a>；<a href="https://www.astrazenecaclinicaltrials.com/study/D9106C00002/">AstraZeneca 临床试验页</a></li>
+    <li id="r5">中期分析交界可切除亚组与安全性：<a href="https://m.ioncol.com/weixin/detail.aspx?aid=11801">Reck 专访（肿瘤瞭望）</a>；<a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC12878408/">综述（PMC12878408）</a>；<a href="https://oncodaily.com/voices/mdt-bridge-393300">Stephen V. Liu 评论（OncoDaily）</a></li>
+    <li id="r6">Dingemans AMC, Opitz I, Brunelli A, et al. Consensus definition of stage III NSCLC technical resectability. <i>Lancet Respir Med</i>. 2026;14(5):453–462. <a href="https://www.thelancet.com/journals/lanres/article/PIIS2213-2600(26)00051-2/abstract">摘要</a></li>
+    <li id="r7">EORTC Lung Cancer Group. Definition of resectable stage III NSCLC: a systematic review. <i>Lung Cancer</i>. 2025. <a href="https://www.lungcancerjournal.info/article/S0169-5002(25)00563-X/abstract">摘要</a>；<a href="https://www.sohu.com/a/987471310_121118854">中文解读</a></li>
+    <li id="r8">Mielgo-Rubio X, et al. Management of borderline resectable NSCLC: a narrative review. <i>Clin Transl Oncol</i>. 2026. <a href="https://link.springer.com/article/10.1007/s12094-026-04305-9">Springer</a></li>
+    <li id="r9">Redefining the concept of resectability in the landscape of perioperative treatments for lung cancer. <i>Front Oncol</i>. 2026. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC13437299/">PMC</a></li>
+    <li id="r10">Forde PM, et al. CheckMate 816. <i>N Engl J Med</i>. 2022；OS 分析 <i>N Engl J Med</i>. 2025. <a href="https://www.nejm.org/doi/full/10.1056/NEJMoa2202170">2022</a>；<a href="https://www.nejm.org/doi/abs/10.1056/NEJMoa2502931">2025</a>；<a href="https://ascopost.com/news/june-2025/resectable-nsclc-overall-survival-with-neoadjuvant-nivolumab-plus-chemotherapy/">ASCO Post</a></li>
+    <li id="r11">Wakelee H, et al. KEYNOTE-671. <i>N Engl J Med</i>. 2023. <a href="https://www.nejm.org/doi/full/10.1056/NEJMoa2302983">NEJM</a>；5 年数据：<a href="https://www.merck.com/news/keytruda-pembrolizumab-demonstrates-long-term-survival-benefit-in-certain-patients-with-earlier-or-advanced-stages-of-non-small-cell-lung-cancer-nsclc/">Merck</a>；<a href="https://ascopost.com/issues/july-10-2023/perioperative-pembrolizumab-plus-chemotherapy-improves-outcomes-in-stage-ii-and-iii-nsclc/">ASCO Post</a></li>
+    <li id="r12">Heymach JV, et al. AEGEAN. <i>N Engl J Med</i>. 2023;389(18):1672–1684. <a href="https://www.nejm.org/doi/full/10.1056/NEJMoa2304875">NEJM</a>；更新分析：<a href="https://www.cancernetwork.com/view/neoadjuvant-adjuvant-durvalumab-combo-elicits-sustained-efs-in-nsclc">CancerNetwork</a>；设计与入组标准：<a href="https://www.clinical-lung-cancer.com/article/S1525-7304(21)00265-5/fulltext">Clin Lung Cancer</a></li>
+    <li id="r13">Cascone T, et al. CheckMate 77T. <i>N Engl J Med</i>. 2024. <a href="https://www.nejm.org/doi/full/10.1056/NEJMoa2311926">NEJM</a>；更新分析：<a href="https://www.targetedonc.com/view/checkmate-77t-trial-of-perioperative-nivolumab-generates-efs-benefit-in-resectable-nsclc">Targeted Oncology</a></li>
+    <li id="r14">Provencio M, et al. NADIM II. <i>N Engl J Med</i>. 2023. <a href="https://www.nejm.org/doi/abs/10.1056/NEJMoa2215530">NEJM</a>；<a href="https://ascopost.com/issues/july-25-2023/addition-of-neoadjuvant-nivolumab-to-platinum-based-chemotherapy-in-stage-iii-nsclc/">ASCO Post</a></li>
+    <li id="r15">Spigel DR, et al. PACIFIC 5-year outcomes. <i>J Clin Oncol</i>. 2022. <a href="https://ascopubs.org/doi/10.1200/JCO.21.01308">JCO</a>；<a href="https://ascopost.com/news/february-2022/pacific-trial-5-year-survival-outcomes-with-durvalumab-after-chemoradiotherapy-in-stage-iii-nsclc/">ASCO Post</a></li>
+    <li id="r16">IMpower030, WCLC 2026（Solomon B 报告）：<a href="https://ascopost.com/news/september-2026/perioperative-atezolizumab-plus-chemotherapy-improves-outcomes-in-resectable-stage-ii-iiib-nsclc">ASCO Post</a>；<a href="https://www.eurekalert.org/news-releases/1142915">EurekAlert!</a>；<a href="https://news.qq.com/rain/a/20260919A0A8R300">腾讯新闻</a></li>
+    <li id="r17">入组标准：<a href="https://cdn.clinicaltrials.gov/large-docs/28/NCT02998528/Prot_000.pdf">CheckMate 816 研究方案</a>；<a href="https://clinicaltrials.stanford.edu/trials/e/NCT03425643.html">KEYNOTE-671（Stanford 临床试验页）</a></li>
+    <li id="r18">欧盟适应证：<a href="https://news.bms.com/news/details/2023/Bristol-Myers-Squibb-Receives-European-Commission-Approval-for-Opdivo-nivolumab-with-Chemotherapy-as-Neoadjuvant-Treatment-of-Resectable-Non-Small-Cell-Lung-Cancer-at-High-Risk-of-Recurrence-in-Patients-with-Tumor-Cell-PD-L1-Expression-1/default.aspx">CheckMate 816（BMS）</a>；<a href="https://www.onclive.com/view/perioperative-pembrolizumab-wins-approval-in-europe-for-resectable-nsclc-at-high-risk-of-recurrence">KEYNOTE-671（OncLive）</a>；<a href="https://www.astrazeneca.com/media-centre/press-releases/2025/imfinzi-approved-in-eu-for-aegean.html">AEGEAN（AstraZeneca）</a></li>
+    <li id="r19">TNM 第 9 版：<a href="https://www.chestphysician.org/updates-in-ninth-edition-of-tnm-classification-criteria-allow-for-more-precise-lung-cancer-staging/">CHEST Physician</a>；<a href="https://www.jto.org/article/S1556-0864(24)00079-0/fulltext">IASLC 分期提案（JTO 2024）</a></li>
+  </ol>
+  <footer>
+    整理日期：2026 年 9 月 27 日。本页为会议与文献数据解读。WCLC 2026 的 MDT-BRIDGE 与 IMpower030 数据来自会议报道转述，尚未经同行评议，以正式发表为准；标注“推”的数字由本文根据公开数字计算，算式已随文列出。本页不构成个体化诊疗建议，临床决策请结合完整分期、患者状态与所在中心 MDT 意见。
+  </footer>
+</section>
+
+</div>
+
+<script>
+(function(){
+  var tip=document.createElement('div');
+  tip.className='tip'; tip.hidden=true; tip.setAttribute('role','tooltip');
+  document.body.appendChild(tip);
+  function fill(el){
+    tip.replaceChildren();
+    var v=document.createElement('strong'); v.textContent=el.getAttribute('data-v')||'';
+    var l=document.createElement('span'); l.textContent=el.getAttribute('data-l')||'';
+    tip.appendChild(v); tip.appendChild(l);
+  }
+  function place(x,y){
+    var r=tip.getBoundingClientRect();
+    var left=x+14, top=y+14;
+    if(left+r.width>window.innerWidth-8) left=x-r.width-14;
+    if(top+r.height>window.innerHeight-8) top=y-r.height-14;
+    tip.style.left=Math.max(8,left)+'px'; tip.style.top=Math.max(8,top)+'px';
+  }
+  var els=document.querySelectorAll('[data-v]');
+  for(var i=0;i<els.length;i++){
+    (function(el){
+      el.addEventListener('pointerenter',function(e){fill(el);tip.hidden=false;place(e.clientX,e.clientY);});
+      el.addEventListener('pointermove',function(e){place(e.clientX,e.clientY);});
+      el.addEventListener('pointerleave',function(){tip.hidden=true;});
+      el.addEventListener('focus',function(){fill(el);tip.hidden=false;var b=el.getBoundingClientRect();place(b.left+b.width/2,b.bottom);});
+      el.addEventListener('blur',function(){tip.hidden=true;});
+    })(els[i]);
+  }
+  window.addEventListener('scroll',function(){tip.hidden=true;},{passive:true});
+})();
+</script>
+</body>
+</html>
